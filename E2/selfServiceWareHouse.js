@@ -1,4 +1,4 @@
-const selfServiceWarehouse = {
+export const selfServiceWarehouse = {
   thelo: {
     1: {
       item: "bicycle",
