@@ -1,0 +1,16 @@
+{
+  "name": "backend-dev-2025-fall",
+  "version": "1.0.0",
+  "description": "first node.js application",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node.js",
+    "module"
+  ],
+  "author": "Elmeri",
+  "license": "ISC"
+}
