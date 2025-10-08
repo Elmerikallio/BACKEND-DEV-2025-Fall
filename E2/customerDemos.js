@@ -10,6 +10,13 @@ const port = 3000;
 //   res.send(`Customer ids: ${customerIds.join(", ")}.`);
 // });
 
+/*
+app.get('/customers/ids', logRequestInfo, (req, res) => {
+  const customerIds = Object.keys(selfServiceWarehouse);
+  res.json({ customerIds });
+});
+*/
+
 const logRequestInfo = (req, res, next) => {
   const { method, url, params, query } = req;
   console.log(`
@@ -23,6 +30,17 @@ const logRequestInfo = (req, res, next) => {
 
 //app.use(logRequestInfo);
 
+// app.get("/customers/ids", logRequestInfo, (req, res) => {
+//   const customerIds = Object.keys(selfServiceWarehouse);
+//   const sortOrder = req.query.sort;
+//   if (sortOrder === "asc") {
+//     customerIds.sort((a, b) => a.localeCompare(b));
+//   } else if (sortOrder === "desc") {
+//     customerIds.sort((a, b) => b.localeCompare(a));
+//   }
+//   res.send(`Customer ids: ${customerIds.join(", ")}.`);
+// });
+
 app.get("/customers/ids", logRequestInfo, (req, res) => {
   const customerIds = Object.keys(selfServiceWarehouse);
   const sortOrder = req.query.sort;
@@ -31,7 +49,7 @@ app.get("/customers/ids", logRequestInfo, (req, res) => {
   } else if (sortOrder === "desc") {
     customerIds.sort((a, b) => b.localeCompare(a));
   }
-  res.send(`Customer ids: ${customerIds.join(", ")}.`);
+  res.status(200).json({ customerIds });
 });
 
 app.get("/customers/:customerId", logRequestInfo, (req, res) => {
@@ -42,6 +60,15 @@ app.get("/customers/:customerId", logRequestInfo, (req, res) => {
   } else {
     res.send(`Customer with id ${customerId} not found.`);
   }
+});
+
+app.delete("/customers/:customerId/items", logRequestInfo, (req, res) => {
+  const customerId = req.params.customerId;
+  const customer = selfServiceWarehouse[customerId];
+  if (!customer) return res.sendStatus(404);
+
+  for (const key of Object.keys(customer)) delete customer[key];
+  res.sendStatus(201);
 });
 
 app.listen(port, () => {
