@@ -6,6 +6,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { errorController } from "./controllers/errorController.js";
 import { homeController } from "./controllers/homeController.js";
+import { subscriberController } from "./controllers/subscriberController.js";
 
 dotenv.config();
 
@@ -27,8 +28,11 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+app.get("/subscribers", subscriberController.getAllSubscribers);
+app.get("/contact", subscriberController.getSubscriptionPage);
+app.post("/subscribe", subscriberController.saveSubscriber);
+
 app.get("/courses", homeController.showCourses);
-app.get("/contact", homeController.showSignUp);
 app.get("/contact", homeController.postedSignUpForm);
 
 app.use(errorController.pageNotFoundError);
