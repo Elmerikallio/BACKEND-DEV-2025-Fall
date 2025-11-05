@@ -1,10 +1,9 @@
-import subscriber from "../models/subscriber.js";
+import Subscriber from "../models/subscriber.js";
 
 // get all subscribers and render the subscribers page
 
 const getAllSubscribers = (req, res) => {
-  subscriber
-    .find({})
+  Subscriber.find({})
     .exec()
     .then((subscribers) => {
       res.render("subscribe", {
