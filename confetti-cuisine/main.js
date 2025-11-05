@@ -3,6 +3,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import layout from "express-ejs-layouts";
+import helmet from "helmet";
 import mongoose from "mongoose";
 import { errorController } from "./controllers/errorController.js";
 import { homeController } from "./controllers/homeController.js";
@@ -24,12 +25,13 @@ app.use(
 app.use(express.json());
 app.use(layout);
 app.use(express.static("public"));
+app.use(helmet());
 
 app.get("/", (req, res) => {
   res.render("index");
 });
 
-app.get("/subscribe", subscriberController.getAllSubscribers);
+app.get("/subscribers", subscriberController.getAllSubscribers);
 app.get("/contact", subscriberController.getSubscriptionPage);
 app.post("/subscribe", subscriberController.saveSubscriber);
 

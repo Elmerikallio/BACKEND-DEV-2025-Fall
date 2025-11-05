@@ -1,44 +1,39 @@
 import Subscriber from "../models/subscriber.js";
 
 // get all subscribers and render the subscribers page
-
-const getAllSubscribers = (req, res) => {
-  Subscriber.find({})
-    .exec()
-    .then((subscribers) => {
-      res.render("subscribe", {
-        subscribers: subscribers,
-      });
-    })
-    .catch((error) => {
-      console.log(error.message);
-      return [];
-    });
+export const getAllSubscribers = async (req, res, next) => {
+  try {
+    const subscribers = await Subscriber.find({}).lean();
+    res.render("subscribers", { subscribers });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 };
 
 //Render subscribtion pahe
-
-const getSubscriptionPage = (req, res) => {
+export const getSubscriptionPage = (req, res) => {
   res.render("contact");
 };
 
-const saveSubscriber = (req, res) => {
-  let newSubscriber = new subscriber({
-    name: req.body.name,
-    email: req.body.email,
-    zipCode: req.body.zipCode,
-    streetAddress: req.body.streetAddress,
-    vip: req.body.vip,
-  });
+export const saveSubscriber = async (req, res, next) => {
+  try {
+    const { name, email, zipCode, streetAddress, vip } = req.body;
 
-  newSubscriber
-    .save()
-    .then(() => {
-      res.render("thanks");
-    })
-    .catch((error) => {
-      res.send(error);
+    const newSubscriber = new Subscriber({
+      name,
+      email,
+      zipCode,
+      streetAddress,
+      vip: Boolean(vip),
     });
+
+    await newSubscriber.save();
+    res.render("thanks");
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 };
 
 export const subscriberController = {
