@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import layout from "express-ejs-layouts";
 import helmet from "helmet";
+import methodOverride from "method-override";
 import mongoose from "mongoose";
 import { errorController } from "./controllers/errorController.js";
 import { homeController } from "./controllers/homeController.js";
@@ -13,34 +14,69 @@ dotenv.config();
 
 const mongoUri = process.env.MONGODB_URI;
 mongoose.connect(mongoUri);
-const app = express();
 
-app.set("view engine", "ejs");
-app.set("port", process.env.PORT || 3001);
-app.use(
+const app = express();
+const router = express.Router();
+
+router.set("view engine", "ejs");
+router.set("port", process.env.PORT || 3001);
+router.use(
   express.urlencoded({
     extended: false,
   })
 );
-app.use(express.json());
-app.use(layout);
-app.use(express.static("public"));
-app.use(helmet());
 
-app.get("/", (req, res) => {
+router.use(methodOverride("_method"));
+
+router.use(express.json());
+router.use(layout);
+router.use(express.static("public"));
+router.use(helmet());
+
+router.get("/", (req, res) => {
   res.render("index");
 });
 
-app.get("/subscribers", subscriberController.getAllSubscribers);
-app.get("/contact", subscriberController.getSubscriptionPage);
-app.post("/subscribe", subscriberController.saveSubscriber);
+router.get(
+  "/subscribers",
+  subscriberController.index,
+  subscriberController.indexView
+);
 
-app.get("/courses", homeController.showCourses);
-app.get("/contact", homeController.postedSignUpForm);
+router.get("/subscribers/new", subscriberController.newView);
+router.post(
+  "/subscribers/create",
+  subscriberController.create,
+  subscriberController.redirectView
+);
 
-app.use(errorController.pageNotFoundError);
-app.use(errorController.internalServerError);
+router.get(
+  "/subscribers/:id",
+  subscriberController.show,
+  subscriberController.showView
+);
 
-app.listen(app.get("port"), () => {
-  console.log(`Server running at http://localhost:${app.get("port")}`);
+router.get("/subscribers/:id/edit", subscriberController.edit);
+router.put(
+  "/subscribers/:id/update",
+  subscriberController.update,
+  subscriberController.redirectView
+);
+
+router.delete(
+  "/subscribers/:id/delete",
+  subscriberController.deleteSubscriber,
+  subscriberController.redirectView
+);
+
+router.get("/courses", homeController.showCourses);
+router.get("/contact", homeController.postedSignUpForm);
+
+router.use(errorController.pageNotFoundError);
+router.use(errorController.internalServerError);
+
+app.use("/", router);
+
+router.listen(router.get("port"), () => {
+  console.log(`Server running at http://localhost:${router.get("port")}`);
 });
