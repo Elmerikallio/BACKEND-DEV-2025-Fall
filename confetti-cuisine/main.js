@@ -13,27 +13,32 @@ import { subscriberController } from "./controllers/subscriberController.js";
 dotenv.config();
 
 const mongoUri = process.env.MONGODB_URI;
-mongoose.connect(mongoUri);
+mongoose
+  .connect(mongoUri)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Mongo connection error", err));
 
 const app = express();
 const router = express.Router();
 
-router.set("view engine", "ejs");
-router.set("port", process.env.PORT || 3001);
-router.use(
+// app settings
+app.set("view engine", "ejs");
+app.set("port", process.env.PORT || 3001);
+
+// middleware
+app.use(layout);
+app.use(express.static("public"));
+app.use(helmet());
+app.use(
   express.urlencoded({
     extended: false,
   })
 );
+app.use(methodOverride("_method"));
+app.use(express.json());
 
-router.use(methodOverride("_method"));
-
-router.use(express.json());
-router.use(layout);
-router.use(express.static("public"));
-router.use(helmet());
-
-router.get("/", (req, res) => {
+// routes
+app.get("/", (req, res) => {
   res.render("index");
 });
 
@@ -44,6 +49,7 @@ router.get(
 );
 
 router.get("/subscribers/new", subscriberController.newView);
+
 router.post(
   "/subscribers/create",
   subscriberController.create,
@@ -57,6 +63,7 @@ router.get(
 );
 
 router.get("/subscribers/:id/edit", subscriberController.edit);
+
 router.put(
   "/subscribers/:id/update",
   subscriberController.update,
@@ -70,13 +77,18 @@ router.delete(
 );
 
 router.get("/courses", homeController.showCourses);
-router.get("/contact", homeController.postedSignUpForm);
+router.get("/contact", homeController.showSignUp);
+router.post("/contact", homeController.postedSignUpForm);
 
+// plug router into app
+app.use("/", router);
+
+// error handlers
 router.use(errorController.pageNotFoundError);
 router.use(errorController.internalServerError);
 
-app.use("/", router);
-
-router.listen(router.get("port"), () => {
-  console.log(`Server running at http://localhost:${router.get("port")}`);
+// start server
+const port = app.get("port");
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${"port"}`);
 });

@@ -21,4 +21,10 @@ subscriberSchema.methods.getInfo = function () {
   Street Address: ${this.streetAddress}`;
 };
 
+subscriberSchema.virtual("subscriberAge").get(function () {
+  const now = new Date();
+  const diffMs = now - this.createdAt;
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+});
+
 export default mongoose.model("Subscriber", subscriberSchema);

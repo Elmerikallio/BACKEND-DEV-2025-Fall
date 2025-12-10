@@ -21,6 +21,10 @@ const courseSchema = mongoose.Schema({
     min: [0, "Course cannot have a negative cost"],
   },
   timestamps: true,
+  prequisities: {
+    type: [String],
+    default: [],
+  },
 });
 
 export default mongoose.model("Course", courseSchema);

@@ -38,6 +38,10 @@ userSchema.virtual("fullName").get(function () {
   return `${this.name.first} ${this.name.last}`;
 });
 
+userSchema.post("save", function (doc) {
+  console.log(`New user created: ${doc.email}`);
+});
+
 userSchema.pre("save", function (next) {
   let user = this;
   if (user.subscribedAccount === undefined) {
