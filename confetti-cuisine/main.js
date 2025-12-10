@@ -78,6 +78,7 @@ router.delete(
 
 router.get("/courses", homeController.showCourses);
 router.get("/contact", homeController.showSignUp);
+
 router.post("/contact", homeController.postedSignUpForm);
 
 // plug router into app

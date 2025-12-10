@@ -24,6 +24,7 @@ const showSignUp = (req, res) => {
 };
 
 const postedSignUpForm = (req, res) => {
+  console.log("Form Data:", req.body);
   res.render("thanks");
 };
 
