@@ -1,10 +1,14 @@
 import Subscriber from "../models/subscriber.js";
 
-const getSubscriberParams = (body) => ({
-  name: body.name,
-  email: body.email,
-  zipCode: body.zipCode,
-});
+const getSubscriberParams = (body) => {
+  return {
+    name: body.name,
+    email: body.email,
+    zipCode: body.zipCode,
+    streetAddress: body.streetAddress,
+    vip: body.vip === "on",
+  };
+};
 
 // function to fetch all subs from the db
 // using Model and .find method
@@ -22,7 +26,9 @@ const index = (req, res, next) => {
 
 // fucntion to render the subscriber index view
 const indexView = (req, res) => {
-  res.render("subscribers/index");
+  res.render("subscribers/index", {
+    subscribers: res.locals.subscribers,
+  });
 };
 
 // function to create a new subscriber
